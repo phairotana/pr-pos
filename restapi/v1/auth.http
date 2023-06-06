@@ -1,0 +1,286 @@
+@host=http://127.0.0.1:8000/
+# @host=http://143.244.150.134/
+# @host=http://69.55.55.16/mrhang/
+@token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMGIxZDc2MjgzZmRhZGI5ZjgzODhlMDhmNDVmMGJjYzg3NzNmYzdjMTUzMDdiZWY2NTU2YzI4MGJlMGI5MDVlZjI4NGUyMjhiNTdhYzUyNDQiLCJpYXQiOjE2NjE4MjQ4OTcuNjg4OTQ4LCJuYmYiOjE2NjE4MjQ4OTcuNjg4OTUzLCJleHAiOjE2Nzc3MjI0OTcuNjc2NTQ0LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.l2k-N4-0n3l-xWCzrwgHZSqxagW9o2mHHkjaYDZZK4395SOQM3WYutAeGXebxwfG0xuNLbkTJxLfhcb0vVZBCdfl-nslWz9ne2RbDSkQAc-r5JfgE9Go_hDnmVA3kw3jPxMcl81m8DAU4t0COcvn4cGbjRpfRmixDclf0XXiogqNaBfVtR3AjR2JrNXdbTIFBvCgoCgmL17lP7EIhQjvVtXLK1CYEa5ohg5mzmk5XCPh_ntSH6NCsX7gRRFFNy0S_Q4UPcuHxpf-WEmVYZf7jsLV1c-XLd-L_5yRjuMR_PYvvEXLGf_nZ5YAQlBldE4QOPuPKwNP38XWpnQahQMjyTxaqD22zy8mkJp6ubUNL_XL-9EUqY2nQljLdBS8WvCe-FkvWuECxNEIuK58XPyuTGiO5M1qjCAPtpbc5T5NrsVp-boYE4HegEtKkc6LUjuSmiiQOAj2s-L1d4ppih7DfAOlrw130ScZEuthJcvZqdbz6ovPbUUyZxewQ0cliNdwSiHvQIeZ1BLJkCKIA6qhINn4_FKiEMcQRK4D4yVwEkf6T4zxuK9wGWz6ipSz0snuvUSMRPtyIE_fuHRP2o2ratW42LfWLImkDSe1vPcRUXniXr4ojPctsm8nad0Ktzu-73nCwv4A6qUSPfkk8tr0o0uR_F4ktErEMvRnlEjCzac
+
+###
+# @name login
+POST {{host}}api/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "dev@dev.com",
+    "password": "12345678"
+}
+###
+POST {{host}}api/otp
+Accept: application/json
+Content-Type: application/json
+
+{
+    "phone": "0719277735"
+}
+###
+POST {{host}}api/verify-otp
+Accept: application/json
+Content-Type: application/json
+
+{
+    "phone": "0719277735",
+    "code": "5632"
+}
+###
+POST {{host}}api/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Test",
+    "last_name": "Test",
+    "phone": "012601102",
+    "address": "Test",
+    "email": "client@gmail.com",
+    "password": "3277121471"
+}
+###
+GET {{host}}api/user
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+PUT {{host}}api/user
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Mr.",
+    "last_name": "Test",
+    "phone": "012601102",
+    "address": "Phnom Penh"
+}
+###
+POST {{host}}api/user/change-password
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "current_password": "12345678",
+    "new_password": "3277121471",
+    "new_confirm_password": "3277121471"
+}
+###
+POST {{host}}api/user/logout
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+# CATEGORY 
+
+###
+GET {{host}}api/v1/category
+Accept: application/json
+Content-Type: application/json
+
+
+
+
+# PRODUCT 
+###
+GET {{host}}api/v1/product
+Accept: application/json
+Content-Type: application/json
+###
+GET {{host}}api/v1/product/1
+Accept: application/json
+Content-Type: application/json
+###
+GET {{host}}api/v1/product?search=test
+Accept: application/json
+Content-Type: application/json
+###
+GET {{host}}api/v1/product?hot=1
+Accept: application/json
+Content-Type: application/json
+###
+GET {{host}}api/v1/product?category_id=1
+Accept: application/json
+Content-Type: application/json
+###
+GET {{host}}api/v1/product?relate=true&product_id=1
+Accept: application/json
+Content-Type: application/json
+
+
+
+
+# FAVOURITE 
+###
+GET {{host}}api/v1/favourite
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+POST {{host}}api/v1/favourite
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "product_id": 2
+}
+###
+DELETE {{host}}api/v1/favourite/2
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+# CART 
+###
+GET {{host}}api/v1/cart
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+POST {{host}}api/v1/cart
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "qty" : 1,
+    "product_id": 2
+}
+###
+PUT {{host}}api/v1/cart/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "qty" : 4
+}
+###
+DELETE {{host}}api/v1/cart/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+# ORDER 
+###
+GET {{host}}api/v1/order
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+GET {{host}}api/v1/order/2
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+POST {{host}}api/v1/order
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "order" : 1
+}
+
+
+
+# ADDRESS
+###
+GET {{host}}api/v1/address
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+POST {{host}}api/v1/address
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "lat" : "1000.0000",
+    "long" : "1200.000",
+    "place" : "Home",
+    "address" : "Phnom Penh",
+    "last_name" : "Sophorn",
+    "first_name" : "Chhuon",
+    "contact_number" : "012601102"
+}
+###
+PUT {{host}}api/v1/address/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "lat" : "20110.0000",
+    "long" : "1200.000",
+    "place" : "Home",
+    "address" : "Phnom Penh",
+    "last_name" : "Sophorn",
+    "first_name" : "Chhuon",
+    "contact_number" : "012601102"
+}
+###
+DELETE {{host}}api/v1/address/1
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+
+# NOTIFICATION 
+###
+GET {{host}}api/user/notification?only=unread
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+GET {{host}}api/user/notification?only=read
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+###
+# type are => read, unread, delete
+PUT {{host}}api/user/notification/readordelete
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "type" : "delete",
+    "id" : "1"
+}
+
+
+
+# SETTING 
+###
+POST {{host}}api/v1/device-token
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "device_token" : "20110.0000"
+}
+###
+GET {{host}}api/v1/setting
+Accept: application/json
+Content-Type: application/json
+
+###
+GET {{host}}api/test
+Accept: application/json
+Content-Type: application/json

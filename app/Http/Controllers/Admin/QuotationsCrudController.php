@@ -372,51 +372,55 @@ class QuotationsCrudController extends CrudController
     }
     protected function update()
     {
-        $entry = $this->crud->getCurrentEntry();
-        $entry->quotationDetails()->delete();
-
         $update =  $this->traitUpdate();
+        DB::beginTransaction();
+        try {
+            $entry = $this->crud->getCurrentEntry();
+            $entry->quotationDetails()->delete();
+            if ($entry->discount_type == 'fixed_value') {
+                $entry->update(['discount_percent' => 0]);
+            } else if ($entry->discount_type == 'percent') {
+                $entry->update(['discount_fixed_value' => 0]);
+            } else {
+                $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
+            }
 
-        $entry = $this->crud->getCurrentEntry();
-        if ($entry->discount_type == 'fixed_value') {
-            $entry->update(['discount_percent' => 0]);
-        } else if ($entry->discount_type == 'percent') {
-            $entry->update(['discount_fixed_value' => 0]);
-        } else {
-            $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
-        }
+            $productDetails = array_map(function ($val) {
+                if ($val->qty == '') {
+                    $val->qty = null;
+                }
+                if ($val->cost_price == '') {
+                    $val->cost_price = null;
+                }
+                if ($val->sell_price == '') {
+                    $val->sell_price = null;
+                }
+                if ($val->discount == '') {
+                    $val->discount = 0;
+                }
+                return $val;
+            }, json_decode(request()->product_detail));
 
-        $productDetails = array_map(function ($val) {
-            if ($val->qty == '') {
-                $val->qty = null;
+            $discountType = request()->discount_type == "percent" ? 'percent' : 'fix_val';
+            foreach ($productDetails ?? [] as  $value) {
+                QuotationDetail::create([
+                    'product_id' => $value->id,
+                    'product_name' => Product::where('product_code', $value->product_code)->value('product_name'),
+                    'product_code' => $value->product_code,
+                    'product_note' => $value->note ?? '',
+                    'total_payable' => $value->t_total,
+                    'discount'     => $value->discount,
+                    'qty'          => $value->qty,
+                    'sell_price'   => $value->sell_price,
+                    'total_amount' => $value->t_total,
+                    'quotation_id' => $this->crud->entry->id,
+                    'dis_type'     => request()->discount_all_type == 'per_item' ? $value->dis_type : $discountType
+                ]);
             }
-            if ($val->cost_price == '') {
-                $val->cost_price = null;
-            }
-            if ($val->sell_price == '') {
-                $val->sell_price = null;
-            }
-            if ($val->discount == '') {
-                $val->discount = 0;
-            }
-            return $val;
-        }, json_decode(request()->product_detail));
-
-        $discountType = request()->discount_type == "percent" ? 'percent' : 'fix_val';
-        foreach ($productDetails ?? [] as  $value) {
-            QuotationDetail::create([
-                'product_id' => $value->id,
-                'product_name' => Product::where('product_code', $value->product_code)->value('product_name'),
-                'product_code' => $value->product_code,
-                'product_note' => $value->note ?? '',
-                'total_payable' => $value->t_total,
-                'discount'     => $value->discount,
-                'qty'          => $value->qty,
-                'sell_price'   => $value->sell_price,
-                'total_amount' => $value->t_total,
-                'quotation_id' => $this->crud->entry->id,
-                'dis_type'     => request()->discount_all_type == 'per_item' ? $value->dis_type : $discountType
-            ]);
+            DB::commit();
+        } catch (\Exception $exp) {
+            DB::rollBack();
+            return back()->withInput();
         }
         return $update;
     }

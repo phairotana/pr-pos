@@ -312,8 +312,6 @@ class PurchaseCrudController extends CrudController
             'value' => Auth::id(),
         ]);
 
-        /* end hidden fields */
-
         CRUD::addField([
             'label' => 'Search Product',
             'name' => 'product_detail',
@@ -323,7 +321,6 @@ class PurchaseCrudController extends CrudController
             'belongs_to' => "Purchase",
             'type' => 'searching_product'
         ]);
-
 
         $this->crud->addField([
             'name' => 'discount_all_type',

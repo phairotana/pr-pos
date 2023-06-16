@@ -568,84 +568,88 @@ class InvoiceCrudController extends CrudController
     }
     protected function update()
     {
+        $update =  $this->traitUpdate();
+        DB::beginTransaction();
+        try {
+            $discountType = null;
+            $entry = $this->crud->getCurrentEntry();
+            $entry->invoiceDetails()->delete();
 
-        $discountType = null;
-        $entry = $this->crud->getCurrentEntry();
-        $entry->invoiceDetails()->delete();
-
-        if (request()->discount_all_type == 'per_item') {
-            $discount = 0;
-            foreach ($this->mergeValidateProductDetails() ?? [] as  $value) {
-                if ($value->discount > 0 && $value->dis_type == "percent") {
-                    $discount += ($value->qty * $value->sell_price) * ($value->discount / 100);
-                } elseif ($value->discount > 0 && $value->dis_type == "fix_val") {
-                    $discount += $value->discount;
+            if (request()->discount_all_type == 'per_item') {
+                $discount = 0;
+                foreach ($this->mergeValidateProductDetails() ?? [] as  $value) {
+                    if ($value->discount > 0 && $value->dis_type == "percent") {
+                        $discount += ($value->qty * $value->sell_price) * ($value->discount / 100);
+                    } elseif ($value->discount > 0 && $value->dis_type == "fix_val") {
+                        $discount += $value->discount;
+                    }
                 }
+                request()->merge([
+                    'discount_amount' => $discount
+                ]);
+            } else {
+                $discountType = request()->discount_type == "percent" ? 'percent' : 'fix_val';
             }
             request()->merge([
-                'discount_amount' => $discount
+                'amount' => (float) request()->amount
             ]);
-        } else {
-            $discountType = request()->discount_type == "percent" ? 'percent' : 'fix_val';
-        }
-        request()->merge([
-            'amount' => (float) request()->amount
-        ]);
 
-        $this->crud->addField(['type' => 'hidden', 'name' => 'seller_id']);
-        $this->crud->addField(['type' => 'hidden', 'name' => 'credit_date']);
-        request()->merge([
-            'seller_id' => backpack_user()->id,
-            'credit_date' => !empty(request()->credit_day) ? Carbon::today()->addDays(request()->credit_day) : null
-        ]);
-        $this->mergeDueAmountRequest();
-        $this->mergeAmountAndAmountPayable();
-        $update =  $this->traitUpdate();
-
-        $entry = $this->crud->getCurrentEntry();
-        if ($entry->discount_type == 'fixed_value') {
-            $entry->update(['discount_percent' => 0]);
-        } else if ($entry->discount_type == 'percent') {
-            $entry->update(['discount_fixed_value' => 0]);
-        } else {
-            $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
-        }
-
-        $totalCost = 0;
-        foreach ($this->mergeValidateProductDetails() ?? [] as  $value) {
-            $totalCost += $value->cost_price * $value->qty;
-            InvoiceDetail::create([
-                'product_id' => $value->id,
-                'product_name' => $value->product_name ?? '',
-                'product_code' => $value->product_code ?? '',
-                'product_note' => $value->note ?? '',
-                'total_payable' => $value->t_total ?? 0,
-                'discount'     => $value->discount ?? 0,
-                'qty'          => $value->qty ?? 1,
-                'cost_price'   => $value->cost_price ?? 0,
-                'sell_price'   => $value->sell_price ?? 0,
-                'total_payable' => $value->t_total ?? 0,
-                'total_amount' => $value->t_total + $value->discount_amount,
-                'invoice_id'  => $this->crud->entry->id,
-                'ref_id' => $this->crud->entry->ref_id,
-                'dis_type' => request()->discount_all_type == 'per_item' ? $value->dis_type : $discountType
-
+            $this->crud->addField(['type' => 'hidden', 'name' => 'seller_id']);
+            $this->crud->addField(['type' => 'hidden', 'name' => 'credit_date']);
+            request()->merge([
+                'seller_id' => backpack_user()->id,
+                'credit_date' => !empty(request()->credit_day) ? Carbon::today()->addDays(request()->credit_day) : null
             ]);
-        }
-        if (request()->payment_status != 'Pending') {
-            Payment::create([
-                'received_by' => backpack_user()->id,
-                'branch_id' => request()->branch,
-                'reference_id' => $this->crud->entry->id,
-                'amount' => request()->received_amount ?? 0
+            $this->mergeDueAmountRequest();
+            $this->mergeAmountAndAmountPayable();
+
+            if ($entry->discount_type == 'fixed_value') {
+                $entry->update(['discount_percent' => 0]);
+            } else if ($entry->discount_type == 'percent') {
+                $entry->update(['discount_fixed_value' => 0]);
+            } else {
+                $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
+            }
+
+            $totalCost = 0;
+            foreach ($this->mergeValidateProductDetails() ?? [] as  $value) {
+                $totalCost += $value->cost_price * $value->qty;
+                InvoiceDetail::create([
+                    'product_id' => $value->id,
+                    'product_name' => $value->product_name ?? '',
+                    'product_code' => $value->product_code ?? '',
+                    'product_note' => $value->note ?? '',
+                    'total_payable' => $value->t_total ?? 0,
+                    'discount'     => $value->discount ?? 0,
+                    'qty'          => $value->qty ?? 1,
+                    'cost_price'   => $value->cost_price ?? 0,
+                    'sell_price'   => $value->sell_price ?? 0,
+                    'total_payable' => $value->t_total ?? 0,
+                    'total_amount' => $value->t_total + $value->discount_amount,
+                    'invoice_id'  => $this->crud->entry->id,
+                    'ref_id' => $this->crud->entry->ref_id,
+                    'dis_type' => request()->discount_all_type == 'per_item' ? $value->dis_type : $discountType
+
+                ]);
+            }
+            if (request()->payment_status != 'Pending') {
+                Payment::create([
+                    'received_by' => backpack_user()->id,
+                    'branch_id' => request()->branch,
+                    'reference_id' => $this->crud->entry->id,
+                    'amount' => request()->received_amount ?? 0
+                ]);
+            }
+            $this->crud->entry->update([
+                'total_cost' => $totalCost
             ]);
+            $this->stockRepo->removeStock($this->mergeValidateProductDetails() ?? []);
+
+            DB::commit();
+        } catch (\Exception $exp) {
+            DB::rollBack();
+            return back()->withInput();
         }
-        $this->crud->entry->update([
-            'total_cost' => $totalCost
-        ]);
-        $this->stockRepo->removeStock($this->mergeValidateProductDetails() ?? []);
-
-
         return $update;
     }
 

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Helpers\Helper;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 
@@ -92,6 +94,10 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceDetail::class, 'invoice_id', 'id');
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'reference_id', 'id');
+    }
     public function invoiceReturns()
     {
         return $this->hasMany(InvoiceReturn::class, 'invoice_id', 'id');
@@ -104,7 +110,7 @@ class Invoice extends Model
     */
     public function scopeOnlyPassDue($query)
     {
-        return  $query->whereDate('credit_date', '<=', \Carbon\Carbon::today())->where('due_amount', '>', \DB::raw('received_amount'));
+        return  $query->whereDate('credit_date', '<=', \Carbon\Carbon::today())->where('due_amount', '>', DB::raw('received_amount'));
     }
     /*
     |--------------------------------------------------------------------------

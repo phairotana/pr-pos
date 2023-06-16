@@ -26,18 +26,13 @@ class InvoiceRequest extends FormRequest
     public function rules()
     {
         if(request()->payment_status == 'Partial'){
-            $creditDayValidate = 'required|numeric';
             $receivedAmountValidate = 'required|numeric';
-        }
-        if(request()->payment_status == 'Pending'){
-            $creditDayValidate = 'required|numeric';
         }
         return [
             'customer_id' => 'required|integer',
             'branch' => 'required|integer',
             'payment_status' => 'required|string',
             'invoice_status' => 'required',
-            'credit_day' => $creditDayValidate ?? '',
             'received_amount' => $receivedAmountValidate ?? ''
         ];
     }

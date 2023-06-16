@@ -223,6 +223,15 @@ class InvoiceCrudController extends CrudController
                 return $html;
             }
         ]);
+
+        $this->crud->addColumn([
+            'label' => 'Credit Date',
+            'name' => 'credit_date',
+            'type' => 'closure',
+            'function' => function ($query) {
+                return !empty($query->credit_date) ? Carbon::parse($query->credit_date)->format('d-m-Y') : NULL;
+            }
+        ]);
     }
     protected function filterOptions()
     {
@@ -412,7 +421,6 @@ class InvoiceCrudController extends CrudController
             'wrapper' => $colMd12,
             'value' => $this->titleHead('Payment'),
         ]);
-
         /* start payment_status */
         if (Session::getOldInput() && !empty(Session::getOldInput()['payment_status'])) {
             if (Session::getOldInput()['payment_status'] == 'Paid') {
@@ -435,13 +443,13 @@ class InvoiceCrudController extends CrudController
             'type' => 'select2_from_array',
             'wrapper' => $colMd4,
             'default' => 'Paid',
-            'attribute' => [
-                'id' => 'input-payment-status'
-            ],
             'options' => [
                 'Paid' => 'Paid',
                 'Partial' => "Partial",
                 'Pending' => "Pending"
+            ],
+            'attributes' => [
+                'class' => 'input-payment-status'
             ],
             'allows_null' => false
         ]);
@@ -460,7 +468,7 @@ class InvoiceCrudController extends CrudController
         ]);
         $this->crud->addField([
             'label' => 'Credit Days <span class="text-danger">*</span>',
-            'name' => 'credit_day',
+            'name' => 'credit',
             'type' => 'number',
             'attributes' => [
                 'placeholder' => 'Ex: 10'
@@ -525,7 +533,7 @@ class InvoiceCrudController extends CrudController
         $this->crud->addField(['type' => 'hidden', 'name' => 'credit_date']);
         request()->merge([
             'seller_id' => backpack_user()->id,
-            'credit_date' => !empty(request()->credit_day) ? Carbon::today()->addDays(request()->credit_day) : null
+            'credit_date' => !empty(request()->credit) ? Carbon::today()->addDays(request()->credit) : null
         ]);
         $this->mergeDueAmountRequest();
         $this->mergeAmountAndAmountPayable();
@@ -568,12 +576,30 @@ class InvoiceCrudController extends CrudController
     }
     protected function update()
     {
+        if(request()->payment_status == 'Pending') {
+            request()->merge(['received_amount' => 0]);
+        }
+        $this->mergeDueAmountRequest();
+        $this->mergeAmountAndAmountPayable();
         $update =  $this->traitUpdate();
         DB::beginTransaction();
         try {
             $discountType = null;
             $entry = $this->crud->getCurrentEntry();
+            $entry->payments()->delete();
             $entry->invoiceDetails()->delete();
+
+            $entry->update([
+                'seller_id' => backpack_user()->id,
+                'credit_date' => !empty(request()->credit) ? Carbon::today()->addDays(request()->credit) : null
+            ]);
+            if ($entry->discount_type == 'fixed_value') {
+                $entry->update(['discount_percent' => 0]);
+            } else if ($entry->discount_type == 'percent') {
+                $entry->update(['discount_fixed_value' => 0]);
+            } else {
+                $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
+            }
 
             if (request()->discount_all_type == 'per_item') {
                 $discount = 0;
@@ -589,26 +615,6 @@ class InvoiceCrudController extends CrudController
                 ]);
             } else {
                 $discountType = request()->discount_type == "percent" ? 'percent' : 'fix_val';
-            }
-            request()->merge([
-                'amount' => (float) request()->amount
-            ]);
-
-            $this->crud->addField(['type' => 'hidden', 'name' => 'seller_id']);
-            $this->crud->addField(['type' => 'hidden', 'name' => 'credit_date']);
-            request()->merge([
-                'seller_id' => backpack_user()->id,
-                'credit_date' => !empty(request()->credit_day) ? Carbon::today()->addDays(request()->credit_day) : null
-            ]);
-            $this->mergeDueAmountRequest();
-            $this->mergeAmountAndAmountPayable();
-
-            if ($entry->discount_type == 'fixed_value') {
-                $entry->update(['discount_percent' => 0]);
-            } else if ($entry->discount_type == 'percent') {
-                $entry->update(['discount_fixed_value' => 0]);
-            } else {
-                $entry->update(['discount_fixed_value' => 0, 'discount_percent' => 0]);
             }
 
             $totalCost = 0;
@@ -680,6 +686,7 @@ class InvoiceCrudController extends CrudController
                     $stock->increment('sale_out', $item->qty);
                 }
             }
+            $entry->payments()->delete();
             $entry->invoiceDetails()->delete();
             DB::commit();
             return (string) $entry->delete();

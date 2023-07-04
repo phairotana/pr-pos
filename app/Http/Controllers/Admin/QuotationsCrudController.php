@@ -88,7 +88,7 @@ class QuotationsCrudController extends CrudController
 
         $this->crud->addColumn([
             'label' => 'Quotation date',
-            'name' => 'quotation_date',
+            'name' => 'FormatQuotationDate',
             'type' => 'text'
         ]);
         $this->crud->addColumn([

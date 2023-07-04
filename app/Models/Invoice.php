@@ -112,6 +112,10 @@ class Invoice extends Model
     {
         return  $query->whereDate('credit_date', '<=', \Carbon\Carbon::today())->where('due_amount', '>', DB::raw('received_amount'));
     }
+    public function scopeSearchCode($query, $searchText)
+    {
+        return $query->orWhere('id', 'like', "%" . ltrim($searchText, "0") . "%");
+    }
     /*
     |--------------------------------------------------------------------------
     | ACCESSORS

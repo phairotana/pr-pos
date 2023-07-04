@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Quotations extends Model
@@ -64,6 +65,9 @@ class Quotations extends Model
     | ACCESSORS
     |--------------------------------------------------------------------------
     */
+    public function getFormatQuotationDateAttribute() {
+        return $this->quotation_date ? Carbon::parse($this->quotation_date)->format('d-m-Y') : '';
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -105,7 +105,7 @@
                     <tr>
                         <td class="khbattambang">កាលបរិច្ឆេទ</td>
                         <td class="khbattambang" style="word-break: break-all;">
-                            {{ \Carbon\Carbon::parse($entry->invoice_date)->format('d-m-Y h:i A') }}
+                            {{ \Carbon\Carbon::parse($entry->invoice_date)->format('d-m-Y') }}
                         </td>
                     </tr>
                 </table>

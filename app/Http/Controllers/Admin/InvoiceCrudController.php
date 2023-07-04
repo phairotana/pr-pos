@@ -90,7 +90,10 @@ class InvoiceCrudController extends CrudController
         $this->crud->addColumn([
             'label' => 'Code',
             'name' => 'Code',
-            'type' => 'text'
+            'type' => 'text',
+            'searchLogic' => function ($query, $column, $searchTerm) {
+                $query->SearchCode($searchTerm);
+            }
         ]);
         $this->crud->addColumn([
             'label' => 'Reference',

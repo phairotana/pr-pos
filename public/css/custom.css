@@ -98,6 +98,10 @@ body {
 
 }
 
+.bg-organe {
+    background-color: var(--bs-orange);
+}
+
 .app-header .navbar-toggler {
     min-width: 116px;
 }

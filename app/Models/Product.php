@@ -25,6 +25,7 @@ class Product extends Model
 
     protected $table = 'products';
     protected $guarded = ['id'];
+    protected $appends = ['stock_qty'];
     protected $fillable = [
         'product_code',
         'product_name',
@@ -52,7 +53,9 @@ class Product extends Model
     | FUNCTIONS
     |--------------------------------------------------------------------------
     */
-
+    public function itemName($id) {
+        return self::where('id', $id)->value('product_name');
+    }
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
@@ -101,6 +104,10 @@ class Product extends Model
     public function getStockQuantityAttribute()
     {
         return optional($this->stock)->quantity ?? 0;
+    }
+    public function getStockQtyAttribute()
+    {
+        return optional($this->stock)->quantity;
     }
 
     /*
@@ -159,7 +166,7 @@ class Product extends Model
     {
         $data = array();
         $galleries = !empty($this->images) ? json_decode($this->images) : [];
-        foreach($galleries as $gallery){
+        foreach ($galleries as $gallery) {
             $data[] = asset($this->getUploadImage($gallery, 'medium'));
         }
         return $data;
@@ -172,7 +179,7 @@ class Product extends Model
     */
     public function setThumnailAttribute($value)
     {
-        if(\Str::startsWith($value,'data:image')){
+        if (\Str::startsWith($value, 'data:image')) {
             $this->attributes['thumnail'] = $this->base64Upload($value);
             $this->deleteFiel($this->getOriginal('thumnail'));
         }

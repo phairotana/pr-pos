@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\V1\SettingController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\FavouriteController;
 use App\Http\Controllers\Api\V1\DeviceTokenController;
+use App\Http\Controllers\Admin\StockTakeCrudController;
 use App\Http\Controllers\Api\Auth\MyNotificationAPIController;
 
 Route::post('otp', [OTPController::class, 'index']);
@@ -27,15 +28,15 @@ Route::middleware(['auth:api'])->group(function () {
     Route::put('user/notification/readordelete', [MyNotificationAPIController::class, 'readOrUnreadOrDelete']);
     Route::apiResource('user/notification', MyNotificationAPIController::class)->only(['index', 'update', 'show']);
 });
-Route::group(['middleware' => 'auth:api','prefix'=>'v1','as'=>'v1.'], function(){
+Route::group(['middleware' => 'auth:api', 'prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::delete('cart/{id}', [CartController::class, 'delete']);
     Route::delete('favourite/{id}', [FavouriteController::class, 'delete']);
-    Route::apiResource('cart', CartController::class)->only(['index','store','update', 'destoy']);
-    Route::apiResource('favourite', FavouriteController::class)->only(['index','store']);
-    Route::apiResource('order', OrderController::class)->only(['index','store','show']);
+    Route::apiResource('cart', CartController::class)->only(['index', 'store', 'update', 'destoy']);
+    Route::apiResource('favourite', FavouriteController::class)->only(['index', 'store']);
+    Route::apiResource('order', OrderController::class)->only(['index', 'store', 'show']);
     Route::apiResource('address', AddressController::class);
 });
-Route::group(['prefix'=>'v1','as'=>'v1.'], function(){
+Route::group(['prefix' => 'v1', 'as' => 'v1.'], function () {
     Route::get('setting', [SettingController::class, 'index'])->name('setting.api');
     Route::get('category', [CategoryController::class, 'index'])->name('category');
     Route::get('product', [ProductController::class, 'index'])->name('product');

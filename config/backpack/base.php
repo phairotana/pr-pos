@@ -24,7 +24,7 @@ return [
     // ----
 
     // Project name. Shown in the window title.
-    'project_name' => 'POS Admin Panel',
+    'project_name' => 'MR HANG',
 
     // When clicking on the admin panel's top-left logo/name,
     // where should the user be redirected?
@@ -78,13 +78,13 @@ return [
     // ------
 
     // Menu logo. You can replace this with an <img> tag if you have a logo.
-    'project_logo'   => '<b>POS CONTROL</b>',
+    'project_logo'   => '<b>MR HANG</b>',
 
     // Show / hide breadcrumbs on admin panel pages.
     'breadcrumbs' => true,
 
     // Horizontal navbar classes. Helps make the admin panel look similar to your project's design.
-    'header_class' => 'app-header bg-primary text-white border-0 navbar d-print-none',
+    'header_class' => 'app-header bg-organe text-white border-0 navbar d-print-none',
     'main_header' => 'position-fixed w-100 header-top',
 
     // For background colors use: bg-dark, bg-primary, bg-secondary, bg-danger, bg-warning, bg-success, bg-info, bg-blue, bg-light-blue, bg-indigo, bg-purple, bg-pink, bg-red, bg-orange, bg-yellow, bg-green, bg-teal, bg-cyan, bg-white
@@ -95,7 +95,7 @@ return [
     // ----
 
     // Body element classes.
-    'body_class' => 'app aside-menu-fixed sidebar-lg-show',
+    'body_class' => 'app aside-menu-fixed sidebar-lg-show' ,
     'content_class' => 'main pt-2 content-scroll',
     'body_id' => 'app',
     // Try sidebar-hidden, sidebar-fixed, sidebar-compact, sidebar-lg-show
@@ -147,7 +147,7 @@ return [
         'https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js',
 
         // examples (VueJS or React)
-         'https://unpkg.com/vue@2.4.4/dist/vue.min.js',
+        'https://unpkg.com/vue@2.4.4/dist/vue.min.js',
         // 'https://unpkg.com/react@16/umd/react.production.min.js',
         // 'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
     ],

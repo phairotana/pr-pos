@@ -12,12 +12,21 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
 <div id="vue_app_product" class="form-group col-md-12 div-search">
 
     <div class="form-group has-search">
-        <b>@{{ label_field }}</b>
+        <!-- <b>@{{ label_field }}</b> -->
         @csrf
-        <span class="la la-search form-control-feedback"></span>
-        <div class="form-group-action">
-            <input v-model="search_term" @keyup="searchProduct" type="search" class="form-control form-control-load typeahead with-loading-action" id="searchDropdownMenuLink" autocomplete="off" placeholder="Search">
-            <div v-if="!is_loaded">@include('component.loading_spinner')</div>
+        <div class="CardInner customInput">
+            <h5>Search item to sale.</h5>
+            <div class="container">
+                <div class="Icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#657789" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                </div>
+                <div class="InputContainer">
+                    <input v-model="search_term" @keyup="searchProduct" type="search" id="searchDropdownMenuLink" autocomplete="off" placeholder="Enter searching term..." />
+                </div>
+            </div>
         </div>
         <ul class="list-group mt-1 w-full">
             <li v-for="{product_name, product_code, id} in product_list" @click="selectProduct(id)" class="list-group-item list-group-item-action" style="cursor: pointer">@{{ product_name }}
@@ -101,6 +110,7 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
 <script src="{{ mix('/js/app.js') }}"></script>
 
 <script>
+    $('body').removeClass('sidebar-lg-show');
     let khValue = " {{ convertKhUnit() }} "
     var element = $(`input[name="{{ $field['name'] }}"]`)
 
@@ -492,6 +502,92 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
 
     select:disabled {
         background: #8a8a8a21 !important;
+    }
+
+
+    :root {
+        --border-radius: 10px;
+    }
+
+    .CardInner {
+        padding: 7px 7px;
+        background-color: #e9ecef;
+        border-radius: 2px;
+    }
+
+    .customInput .container {
+        display: flex;
+    }
+
+    .Icon {
+        min-width: 46px;
+        min-height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--border-radius);
+        margin-right: 12px;
+        box-shadow: -2px -2px 6px rgba(255, 255, 255, 0.6), 2px 2px 12px #c8d8e7;
+    }
+
+    .Icon svg {
+        transform: translate(-1px, -1px);
+    }
+
+    .customInput h5 {
+        color: #6c757d;
+    }
+
+    .InputContainer {
+        width: 100%;
+    }
+
+    .customInput input {
+        padding: 10px 15px;
+        border: none;
+        display: block;
+        font-weight: 600;
+        color: #a9b8c9;
+        transition: all 240ms ease-out;
+        width: 100%;
+    }
+
+    .customInput input::placeholder {
+        color: #6d7f8f;
+    }
+
+    .customInput input:focus {
+        outline: none;
+        color: #6d7f8f;
+        /* background-color: #eff5fa; */
+    }
+
+    .InputContainer {
+        --top-shadow: inset 1px 1px 3px #c5d4e3, inset 2px 2px 6px #c5d4e3;
+        --bottom-shadow: inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+        position: relative;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+    }
+
+    .InputContainer:before,
+    .InputContainer:after {
+        left: 0;
+        top: 0;
+        display: block;
+        content: "";
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+    }
+
+    .InputContainer:before {
+        box-shadow: var(--bottom-shadow);
+    }
+
+    .InputContainer:after {
+        box-shadow: var(--top-shadow);
     }
 </style>
 @endpush

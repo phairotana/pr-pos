@@ -91,7 +91,7 @@ use App\Helpers\Helper;
                         @if ($entry->purchase_status == 'Pending')
                             <span class='order'>Pending</span>
                         @elseif ($entry->purchase_status == 'Partial Receive')
-                            <span class='pending'>Partial Received</span>"
+                            <span class='pending'>Partial Received</span>
                         @elseif ($entry->purchase_status == 'Receive')
                             <span class='success'>Received</span>
                         @endif

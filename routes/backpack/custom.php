@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\InvoiceCrudController;
 use App\Http\Controllers\Admin\PurchaseCrudController;
+use App\Http\Controllers\Admin\StockTakeCrudController;
 use App\Http\Controllers\Admin\QuotationsCrudController;
 use App\Http\Controllers\Admin\InvoiceReturnCrudController;
 use App\Http\Controllers\Admin\PurchaseReturnCrudController;
+use App\Http\Controllers\Admin\StockAdjustmentCrudController;
 
 // --------------------------
 // Custom Backpack Routes
@@ -46,6 +48,8 @@ Route::group([
     Route::crud('attribute', 'AttributeCrudController');
     Route::crud('product', 'ProductCrudController');
     Route::crud('stock', 'StockCrudController');
+    Route::crud('stock/take', 'StockTakeCrudController');
+    Route::crud('stock/adjustment', 'StockAdjustmentCrudController');
     Route::crud('branch', 'BranchCrudController');
     Route::crud('brand', 'BrandCrudController');
     Route::crud('payment', 'PaymentCrudController');
@@ -107,13 +111,16 @@ Route::group([
     Route::post('/purchasereturn/edit-status', [PurchaseReturnCrudController::class, 'editStatus']);
     Route::post('/qoutationstatus/edit-status', [QuotationsCrudController::class, 'editStatus']);
     Route::post('products-import', 'ProductCrudController@importData')->name('products-import');
+    Route::get('product/fetching', 'ProductCrudController@product')->name('product.fetching');
     Route::get('invoice/{id}/normal-print', 'InvoiceCrudController@print');
     Route::get('report/payment/print', 'Dashboards\DashboardCrudController@printPayment');
     Route::get('get-invoice/{id}', [InvoiceCrudController::class, 'getInvoice']);
     Route::get('get-quotation/{id}', [QuotationsCrudController::class, 'getQuotation']);
+    Route::get('stocktake/export/excel/{id}', [StockTakeCrudController::class, 'exportToExcel']);
+    Route::get('stocktake/export/pdf/{id}', [StockTakeCrudController::class, 'exportToPdf']);
+    Route::get('stockadjust/export/excel/{id}', [StockAdjustmentCrudController::class, 'exportToExcel']);
 
     // Route::get('report/profit_and_loss', 'Dashboards\DashboardCrudController@profit_and_loss');
-
     Route::get('report/profit_and_loss', 'Dashboards\DashboardCrudController@profit_and_loss');
     Route::post(
         'report/fetch_profit_data',

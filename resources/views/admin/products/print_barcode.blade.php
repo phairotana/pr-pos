@@ -13,7 +13,7 @@
         </span>
         <div class="mt-3 to-print">
             <div>{!! $generator->getBarcode($entry->product_code, $generator::TYPE_CODE_128) !!}</div>
-            <p>code: {{ $entry->product_code ?? $entry->id }}</p>
+            <p>CODE: {{ $entry->product_code ?? $entry->id }}</p>
         </div>
     </span>
 

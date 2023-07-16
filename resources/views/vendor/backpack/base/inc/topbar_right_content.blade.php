@@ -9,14 +9,14 @@
             ->count();
     @endphp
     <a class="nav-link" href="{{ URL('admin/invoice?only_pass_due=true') }}">
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-light btn-sm">
             <i class="la la-dollar-sign"></i> <span class="badge bg-danger ms-1">{{ $due }}</span>
         </button>
     </a>
 </li>
 <li class="nav-item">
     <a class="nav-link" href="{{ URL('admin/stock?only_out_stock=true') }}">
-        <button type="button" class="btn btn-primary">
+        <button type="button" class="btn btn-light btn-sm">
             <i class="la la-cart-arrow-down"></i> <span class="badge bg-danger ms-1">{{ $productOutOfStock }}</span>
         </button>
     </a>

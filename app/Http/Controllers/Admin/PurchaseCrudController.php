@@ -273,7 +273,7 @@ class PurchaseCrudController extends CrudController
 
         $this->crud->addField([
             'name' => 'description',
-            'type' => "textarea",
+            'type' => "summernote",
             'label' => "Description",
             'wrapper' => $col_md_12,
             'tab' => $tab_purchase,

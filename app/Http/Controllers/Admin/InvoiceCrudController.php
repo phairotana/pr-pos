@@ -19,6 +19,7 @@ use App\Http\Requests\InvoiceRequest;
 use Illuminate\Support\Facades\Session;
 use App\Repositories\StockPurchaseRepository;
 use App\Http\Controllers\TraitUse\AssociateProduct;
+use App\Models\Branch;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Http\Controllers\Operations\FetchOperation;
@@ -307,6 +308,7 @@ class InvoiceCrudController extends CrudController
             'minimum_input_length'  => 0,
             'wrapper'   => $colMd4,
             'model'                 => "App\Models\Customer",
+            'default' => request()->user()->id
         ]);
         CRUD::addField([
             'method'      => 'POST',
@@ -319,6 +321,8 @@ class InvoiceCrudController extends CrudController
             'placeholder' => 'Select branch',
             'minimum_input_length'  => 0,
             'wrapper'   => $colMd4,
+            'default' => Branch::select('id', 'branch_name')
+                ->where('branch_name', 'LIKE', 'Phnom Penh')->value('id'),
             'attributes' => [
                 'class' => 'branch-element'
             ]
@@ -354,11 +358,9 @@ class InvoiceCrudController extends CrudController
         ]);
 
         /* end hidden fields */
-
-
         $this->crud->addField([
             'name' => 'noted',
-            'type' => "textarea",
+            'type' => "summernote",
             'label' => "Note",
             'wrapper' => [
                 'class' => 'col-md-12 my-3'
@@ -579,7 +581,7 @@ class InvoiceCrudController extends CrudController
     }
     protected function update()
     {
-        if(request()->payment_status == 'Pending') {
+        if (request()->payment_status == 'Pending') {
             request()->merge(['received_amount' => 0]);
         }
         $this->mergeDueAmountRequest();

@@ -58,11 +58,11 @@ class StockCrudController extends CrudController
             'label' => '#',
             'orderable' => false,
         ])->makeFirstColumn();
-        // CRUD::addColumn([
-        //     'label' => 'Stock code',
-        //     'name' => 'stock_code',
-        //     'type' => 'text'
-        // ]);
+        CRUD::addColumn([
+            'label' => 'Stock code',
+            'name' => 'stock_code',
+            'type' => 'text'
+        ]);
         CRUD::addColumn([
             'label' => 'Product code',
             'name' => 'product_code',
@@ -81,16 +81,16 @@ class StockCrudController extends CrudController
             'type'      => 'number',
             'name'      => 'quantity',
         ]);
-        // CRUD::addColumn([
-        //     'label'     => 'Purchase',
-        //     'type'      => 'number',
-        //     'name'      => 'purchase',
-        // ]);
-        // CRUD::addColumn([
-        //     'label'     => 'Sale out',
-        //     'type'      => 'number',
-        //     'name'      => 'sale_out',
-        // ]);
+        CRUD::addColumn([
+            'label'     => 'Stock In',
+            'type'      => 'number',
+            'name'      => 'purchase',
+        ]);
+        CRUD::addColumn([
+            'label'     => 'Stock Out',
+            'type'      => 'number',
+            'name'      => 'sale_out',
+        ]);
         CRUD::addColumn([
             'name'  => 'updated_at',
             'label' => 'Updated At',

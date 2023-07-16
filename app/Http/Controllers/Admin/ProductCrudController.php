@@ -465,6 +465,14 @@ class ProductCrudController extends CrudController
         return response()->json($products);
 
     }
+    public function product()
+    {
+        $query = (new Product)->newQuery();
+        $query->where('id', request()->code);
+        $query->orWhere('product_code', request()->code);
+        return response()->json($query->get());
+
+    }
     public function barcode()
     {
         return 'Under Develop';

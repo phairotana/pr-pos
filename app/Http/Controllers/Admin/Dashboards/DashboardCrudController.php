@@ -9,13 +9,7 @@ use App\Models\Invoice;
 
 use App\Models\Purchase;
 use Illuminate\Http\Request;
-use App\Models\InvoiceDetail;
-use App\Models\InvoiceReturn;
-use App\Models\PurchaseReturn;
 use App\Libraries\DashboardLib;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
-use App\Models\InvoiceReturnDetail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;

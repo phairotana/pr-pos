@@ -96,7 +96,8 @@ return [
 
     // Body element classes.
     'body_class' => 'app aside-menu-fixed sidebar-lg-show' ,
-    'content_class' => 'main pt-2 content-scroll',
+    // 'content_class' => 'main pt-2 content-scroll',
+    'content_class' => 'content-scroll',
     'body_id' => 'app',
     // Try sidebar-hidden, sidebar-fixed, sidebar-compact, sidebar-lg-show
 

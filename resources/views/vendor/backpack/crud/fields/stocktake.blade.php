@@ -38,8 +38,8 @@ $model = $field['model'] ?? '';
         </div>
 
         <ul class="list-group mt-1 w-full">
-            <li v-for="{product_name, product_code, id, qty} in product_list" @click="selectProduct(id,qty)" class="list-group-item list-group-item-action" style="cursor: pointer">@{{ product_name }}
-                <font color='grey'>#@{{ product_code }}</font>
+            <li v-for="{product_name, product_code, id, qty} in product_list" @click="selectProduct(id,qty)" class="list-group-item list-group-item-action" style="cursor: pointer;">
+                <span v-text="product_name"></span><span class="text-muted" v-text="' #' + product_code"></span>
             </li>
         </ul>
         <input type="hidden" name="product_detail" :value="product_json">
@@ -62,10 +62,10 @@ $model = $field['model'] ?? '';
                     <td v-if="!product_action.length" class="text-center" valign="top" colspan="8" class="dataTables_empty">Please search and select product</td>
                     <tr scope="row" v-for="({ product_name, product_code, stock_qty , id, qty,qty_counted, note},index) in product_action">
 
-                        <td class="font-weight-bold">@{{ index + 1 }}</td>
-                        <td> @{{ product_code }}</td>
-                        <td>@{{ product_name }}</td>
-                        <td class="font-weight-bold">@{{ stock_qty }}</td>
+                        <td class="font-weight-bold" v-text="(index + 1)"></td>
+                        <td v-text="product_code"></td>
+                        <td v-text="product_name"></td>
+                        <td v-text="stock_qty" class="font-weight-bold"></td>
                         <td>
                             <div class="btn-group" role="group" aria-label="...">
                                 <button onclick="incrementQty(this)" :data-id="id" type="button" class="btn btn-outline-primary btn-sm"><i class="la la-plus"></i></button>
@@ -76,8 +76,8 @@ $model = $field['model'] ?? '';
                         <td v-if="qty_counted == 0" class="font-weight-bold text-primary" data-label="Difference">
                             <em class="la la-check la-lg fw-bolder" aria-hidden="true"></em>
                         </td>
-                        <td v-else-if="qty_counted > 0" class="font-weight-bold text-warning" data-label="Difference">+@{{qty_counted}}</td>
-                        <td v-else class="font-weight-bold text-danger" data-label="Difference">@{{qty_counted}}
+                        <td v-else-if="qty_counted > 0" class="font-weight-bold text-warning" data-label="Difference" v-text="qty_counted"></td>
+                        <td v-else class="font-weight-bold text-danger" data-label="Difference" v-text="qty_counted">
                         </td>
                         <td><input class="form-control form-control-sm input-outline" @keyup="updateContext($event.target.value, 'note', id)" :value="note"></td>
                         <td>

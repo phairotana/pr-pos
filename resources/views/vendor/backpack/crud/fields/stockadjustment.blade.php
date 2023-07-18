@@ -4,7 +4,7 @@ $sourceRoute = $field['source_route'] ?? route('admin.api.product_search');
 $model = $field['model'] ?? '';
 @endphp
 
-<div id="vueApp" class="form-group col-md-12 div-search">
+<div id="vueApp" class="form-group col-md-12 div-search" loading="lazy">
     <input id="scanbarcode" class="toggle" type="checkbox">
     <label for="scanbarcode" class="lbl-toggle" tabindex="0">
         <svg t="1689504106856" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3168" width="22" height="22">
@@ -84,7 +84,6 @@ $model = $field['model'] ?? '';
 
     <div class="form-group has-search mt-3">
         @csrf
-
         <div class="CardInner customInput">
             <h5>Search item to adjustment.</h5>
             <div class="container">
@@ -101,8 +100,8 @@ $model = $field['model'] ?? '';
         </div>
 
         <ul class="list-group mt-1 w-full">
-            <li v-for="{product_name, product_code, id, qty} in product_list" @click="selectProduct(id,qty)" class="list-group-item list-group-item-action" style="cursor: pointer">@{{ product_name }}
-                <font color='grey'>#@{{ product_code }}</font>
+            <li v-for="{product_name, product_code, id, qty} in product_list" @click="selectProduct(id,qty)" class="list-group-item list-group-item-action" style="cursor: pointer;">
+                <span v-text="product_name"></span><span class="text-muted" v-text="' #' + product_code"></span>
             </li>
         </ul>
         <input type="hidden" name="product_detail" :value="product_json">
@@ -136,11 +135,11 @@ $model = $field['model'] ?? '';
                         <td>
                             <a @click="removeFromList(id)"><i class="la la-trash-o la-lg text-danger" aria-hidden="true"></i></a>
                         </td>
-                        <td>@{{ product_name }}</td>
+                        <td v-text=product_name></td>
 
-                        <td class="font-weight-bold">@{{ stock_qty }}</td>
-                        <td class="font-weight-bold">@{{ stock.purchase }}</td>
-                        <td class="font-weight-bold">@{{ stock.sale_out }}</td>
+                        <td class="font-weight-bold" v-text="stock_qty"></td>
+                        <td class="font-weight-bold" v-text="stock.purchase"></td>
+                        <td class="font-weight-bold" v-text="stock.sale_out"></td>
 
                         <td>
                             <div class="btn-group" role="group" aria-label="...">
@@ -163,9 +162,9 @@ $model = $field['model'] ?? '';
                                 <input type="number" pattern="/^(|-?\d+)$/g" onkeydown="return event.keyCode !== 190" class="form-control form-control-sm enter-qty input-outline" onkeyup="movement(this, 'movement so')" :data-id=id :value=so_movement>
                             </div>
                         </td>
-                        <td class="font-weight-bold text-danger" data-label="after">@{{qty_after}}</td>
-                        <td class="font-weight-bold text-danger" data-label="after">@{{si_after}}</td>
-                        <td class="font-weight-bold text-danger" data-label="after">@{{so_after}}</td>
+                        <td class="font-weight-bold text-danger" data-label="after" v-text="qty_after"></td>
+                        <td class="font-weight-bold text-danger" data-label="after" v-text="si_after"></td>
+                        <td class="font-weight-bold text-danger" data-label="after" v-text="so_after"></td>
                     </tr>
                 </tbody>
             </table>
@@ -607,8 +606,8 @@ $model = $field['model'] ?? '';
 
 <!-- JQuery Script -->
 <script>
-    var vm = app;
     $('body').removeClass('sidebar-lg-show');
+    var vm = app;
     let myLabels = document.querySelectorAll('.lbl-toggle');
     Array.from(myLabels).forEach(label => {
         label.addEventListener('keydown', e => {

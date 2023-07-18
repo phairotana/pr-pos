@@ -12,7 +12,6 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
 <div id="vue_app_product" class="form-group col-md-12 div-search">
 
     <div class="form-group has-search">
-        <!-- <b>@{{ label_field }}</b> -->
         @csrf
         <div class="CardInner customInput">
             <h5>Search item to sale.</h5>
@@ -29,9 +28,8 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
             </div>
         </div>
         <ul class="list-group mt-1 w-full">
-            <li v-for="{product_name, product_code, id} in product_list" @click="selectProduct(id)" class="list-group-item list-group-item-action" style="cursor: pointer">@{{ product_name }}
-                <font color='grey'>
-                    #@{{ product_code }}</font>
+            <li v-for="{product_name, product_code, id} in product_list" @click="selectProduct(id)" class="list-group-item list-group-item-action" style="cursor: pointer;">
+                <span v-text="product_name"></span><span class="text-muted" v-text="' #' + product_code"></span>
             </li>
         </ul>
         {{-- Hidden input fields --}}
@@ -62,9 +60,9 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
                 <tbody>
                     <td v-if="!product_action.length" class="text-center" valign="top" colspan="8" class="dataTables_empty">Please search and select product</td>
                     <tr v-for="({ product_name, product_code, stock_qty , id, dis_type, qty, note, sell_price, cost_price ,t_total, discount , pre_order},index) in product_action">
-                        <td class="font-weight-bold">@{{ index + 1 }}</td>
-                        <th> @{{ product_code }}</th>
-                        <td>@{{ product_name }}</td>
+                        <td class="font-weight-bold" v-text="(index + 1)"></td>
+                        <th v-text="product_code"></th>
+                        <td v-text="product_name"></td>
                         <td><input class="form-control form-md" @keyup="updateContext($event.target.value, 'note', id)" :value="note"></td>
                         <td><input class="form-control form-sm" min="1" @keyup="updateContext($event.target.value, 'qty', id, $event)" :value="qty" type="number"></td>
                         <td><input class="form-control form-sm" @keyup="updateContext($event.target.value, belongs_to_invoice ? 'sell_price': 'cost_price', id)" :value="belongs_to_invoice ? sell_price : cost_price"></td>
@@ -76,8 +74,9 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
                         </td>
                         <td><input class="form-control form-sm" type="number" @keyup="updateContext($event.target.value, 'discount', id)" :value="discount" :max="dis_type == 'percent' ? 100 : ''" :disabled="disable_discount_input" step="any"></td>
                         <td v-if="isEnable" class="text-success">
-                            @{{ qty > stock_qty || pre_order == 'Yes' ? "Yes" : "No" }} </td>
-                        <td> @{{ numberFormat(t_total) }} </td>
+                            <span v-if=" qty > stock_qty || pre_order == 'Yes'">Yes</span>
+                            <span v-else>No</span>
+                        <td v-text="numberFormat(t_total)"></td>
                         <td><a class="btn btn-sm btn-danger" @click="removeFromList(id)"><em class="la la-close text-white"></em></a> </td>
                     </tr>
                 </tbody>
@@ -89,15 +88,19 @@ $belongsTo = $field['belongs_to'] ?? 'Invoice';
             <table class="table table-sm">
                 <tbody>
                     <tr>
-                        <td class="bold text-nowrap">Discount @{{ discount_all_type == 'per_invoice' && discount_type == 'percent' ? '(' + discount_percent_amount + ')' : "" }}</td>
-                        <td class="text-right text-nowrap">@{{ numberFormat(discount_amount) }}</td>
-                        <td class="text-right text-nowrap">@{{ numberFormat(discount_amount_kh).replace('$', '៛ ') }}</td>
+                        <td class="bold text-nowrap">Discount
+                            <span v-if="discount_all_type == 'per_invoice' && discount_type == 'percent'" v-text="'(' + discount_percent_amount + ')'"></span>
+                            <span v-else></span>
+                        </td>
+                        <td class="text-right text-nowrap" v-text="numberFormat(discount_amount)"></td>
+                        <td class="text-right text-nowrap" v-text="numberFormat(discount_amount_kh).replace('$', '៛ ')"></td>
                     </tr>
                     <tr>
                         <td><span class="font-weight-bold text-nowrap">Grand Total</span></td>
-                        <td class="text-right text-nowrap"><span class="font-weight-bold">@{{ numberFormat(total) }}</span>
+                        <td class="text-right text-nowrap">
+                            <span class="font-weight-bold" v-text="numberFormat(total)"></span>
                         </td>
-                        <td class="text-right text-nowrap">@{{ numberFormat(total_kh).replace('$', '៛ ') }}</td>
+                        <td class="text-right text-nowrap" v-text="numberFormat(total_kh).replace('$', '៛ ')"></td>
                     </tr>
                 </tbody>
             </table>

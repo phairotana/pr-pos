@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use App\Models\Invoice;
+use App\Models\Purchase;
 use App\Helpers\RolePermission;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\PaymentRequest;
-use App\Models\Purchase;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -34,7 +35,7 @@ class PaymentCrudController extends CrudController
     public function setup()
     {
         if (backpack_user() && !backpack_user()->hasAnyRole(\Spatie\Permission\Models\Role::all())){
-            \Auth::logout();
+            Auth::logout();
             return redirect('admin/login');
         }
         RolePermission::checkPermission($this->crud, 'payment');

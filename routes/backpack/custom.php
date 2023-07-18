@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\InvoiceCrudController;
 use App\Http\Controllers\Admin\PurchaseCrudController;
 use App\Http\Controllers\Admin\StockTakeCrudController;
@@ -18,7 +17,6 @@ use App\Http\Controllers\Admin\StockAdjustmentCrudController;
 Route::get('/home', function () {
     return redirect()->to('/');
 });
-
 
 Route::group([
     'prefix' => 'api',
@@ -56,6 +54,7 @@ Route::group([
     // DASHBOARD
     Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', 'namespace' => 'Dashboards'], function () {
         Route::get('/', 'DashboardCrudController@index')->name('index');
+        Route::get('/fetching', 'DashboardCrudController@fetching')->name('fetching');
         Route::get('charts/weekly-sale-purchase', 'Charts\WeeklySalePurchaseChartController@response');
         Route::get('charts/top-five-customer', 'Charts\TopFiveCustomersChartController@response');
     });

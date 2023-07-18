@@ -30,20 +30,7 @@ class DashboardLib
             ->select('products.*', 'stocks.quantity', 'branches.branch_name')
             ->orderByRaw('products.id')->get();
     }
-    public static function salesDash()
-    {
-        return Invoice::select('invoice_date, received_amount, invoice_status')
-            ->whereIn('invoice_status', ['Receive', 'Partial Receive'])
-            ->whereBetween('invoice_date', [Helper::thisMonthBetween()[0], Helper::thisMonthBetween()[1]])
-            ->sum('received_amount');
-    }
-    public static function purchasesDash()
-    {
-        return Purchase::select('purchase_date, amount_payable, purchase_status')
-            ->whereIn('purchase_status', ['Receive', 'Partial Receive'])
-            ->whereBetween('purchase_date', [Helper::thisMonthBetween()[0], Helper::thisMonthBetween()[1]])
-            ->sum('amount_payable');
-    }
+
     public static function salesReturnDash()
     {
         return InvoiceReturn::select('invoice_return_date, received_amount, invoice_status')
@@ -93,17 +80,33 @@ class DashboardLib
             ->groupBy('product_code')
             ->orderBy('total_qty', 'DESC')->get();
     }
-    public static function monthlyExpense()
+
+
+    // public static function salesDash()
+    public static function salesDash($from, $to)
     {
-        $amount = Expense::whereBetween('expense_date', [Helper::thisMonthBetween()[0], Helper::thisMonthBetween()[1]])
+        return Invoice::select('invoice_date, received_amount, invoice_status')
+            ->whereIn('invoice_status', ['Receive', 'Partial Receive'])
+            ->whereBetween('invoice_date', [$from ?? Helper::thisMonthBetween()[0], $to ?? Helper::thisMonthBetween()[1]])
+            ->sum('received_amount');
+    }
+    public static function purchasesDash($from, $to)
+    {
+        return Purchase::select('purchase_date, amount_payable, purchase_status')
+            ->whereIn('purchase_status', ['Receive', 'Partial Receive'])
+            ->whereBetween('purchase_date', [$from ?? Helper::thisMonthBetween()[0], $to ?? Helper::thisMonthBetween()[1]])
+            ->sum('amount_payable');
+    }
+    public static function monthlyExpense($from, $to)
+    {
+        $amount = Expense::whereBetween('expense_date', [$from ?? Helper::thisMonthBetween()[0], $to ?? Helper::thisMonthBetween()[1]])
             ->sum('amount');
         return Helper::calculatNumberToK($amount);
     }
-    public static function monthlyPayment()
+    public static function monthlyPayment($from, $to)
     {
-        $amount = Payment::whereBetween('created_at', [Helper::thisMonthBetween()[0], Helper::thisMonthBetween()[1]])
-        ->sum('amount');
+        $amount = Payment::whereBetween('created_at', [$from ?? Helper::thisMonthBetween()[0], $to ?? Helper::thisMonthBetween()[1]])
+            ->sum('amount');
         return Helper::calculatNumberToK($amount);
-
     }
 }

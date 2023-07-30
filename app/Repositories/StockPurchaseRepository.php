@@ -52,6 +52,7 @@ class StockPurchaseRepository extends BaseRepository
                 'stock_code' => $this->generateStockCode(),
                 'product_code' => $prod->product_code,
                 'quantity' => $prod->qty,
+                'purchase' => $prod->qty,
                 'branch_id' => '1',
                 'purchase_id' => $purchase_id,
                 'sale_out' => 0,

@@ -47,7 +47,7 @@
                 <div class="row p-1">
                     <div class="col">
                         <h5 class="card-title text-uppercase text-muted mb-0">PURCHASES</h5>
-                        <span class="h6 font-weight-bold mb-0" v-text="purchase_dash"></span>
+                        <span class="h6 font-weight-bold mb-0" v-text="purchases_dash"></span>
                     </div>
                     <div class="col-auto">
                         <div class="icon-size icon-shape bg-organe text-white rounded-circle shadow-card">
@@ -69,7 +69,7 @@
                 <div class="row p-1">
                     <div class="col">
                         <h5 class="card-title text-uppercase text-muted mb-0">PAYMENTS</h5>
-                        <span class="h6 font-weight-bold mb-0" v-text="payment_dash"></span>
+                        <span class="h6 font-weight-bold mb-0" v-text="sales_dash"></span>
                     </div>
                     <div class="col-auto">
                         <div class="icon-size icon-shape bg-success text-white rounded-circle shadow-card">
@@ -294,7 +294,7 @@ Widget::add([
         data() {
             return {
                 sales_dash: '0.00 USD',
-                purchase_dash: '0.00 USD',
+                purchases_dash: '0.00 USD',
                 expense_dash: '0.00 USD',
                 payment_dash: '0.00 USD'
             }
